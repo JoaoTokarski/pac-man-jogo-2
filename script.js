@@ -16,7 +16,7 @@ const layout = Array.from({ length: totalCells }, (_, i) => {
 });
 
 function createBoard() {
-  board.innerHTML = ''; // Evita duplicação se recriar
+  board.innerHTML = '';
   for (let i = 0; i < totalCells; i++) {
     const cell = document.createElement('div');
     cell.classList.add('cell');
@@ -47,7 +47,6 @@ document.addEventListener('keydown', e => {
     default: return;
   }
 
-  // Checa limites e colisão com parede
   if (
     nextIndex >= 0 &&
     nextIndex < totalCells &&
@@ -75,16 +74,17 @@ for (let i = 0; i < ghostCount; i++) {
   } while (
     layout[ghostIndex] === 1 ||
     ghostIndex === pacmanIndex ||
-    ghosts.includes(ghostIndex)
+    ghosts.some(g => g.index === ghostIndex)
   );
-  ghosts.push(ghostIndex);
-  cells[ghostIndex].classList.add('ghost');
+  ghosts.push({ index: ghostIndex, className: `ghost${i}` });
+  cells[ghostIndex].classList.add(`ghost${i}`);
 }
 
-// Movimento dos Fantasmas (seguem o Pac-Man)
+// Movimento dos Fantasmas
 function moveGhosts() {
   for (let i = 0; i < ghosts.length; i++) {
-    let currentIndex = ghosts[i];
+    let current = ghosts[i];
+    let currentIndex = current.index;
     let bestMove = currentIndex;
     let minDistance = Infinity;
     const directions = [-1, 1, -width, width];
@@ -95,7 +95,7 @@ function moveGhosts() {
         next >= 0 &&
         next < totalCells &&
         !cells[next].classList.contains('wall') &&
-        !cells[next].classList.contains('ghost')
+        !ghosts.some(g => g.index === next)
       ) {
         const dx = next % width - pacmanIndex % width;
         const dy = Math.floor(next / width) - Math.floor(pacmanIndex / width);
@@ -108,9 +108,9 @@ function moveGhosts() {
     }
 
     if (bestMove !== currentIndex) {
-      cells[currentIndex].classList.remove('ghost');
-      ghosts[i] = bestMove;
-      cells[bestMove].classList.add('ghost');
+      cells[currentIndex].classList.remove(current.className);
+      ghosts[i].index = bestMove;
+      cells[bestMove].classList.add(current.className);
     }
 
     if (bestMove === pacmanIndex) {
@@ -120,4 +120,4 @@ function moveGhosts() {
   }
 }
 
-setInterval(moveGhosts, 400);
+setInterval(moveGhosts, 300);

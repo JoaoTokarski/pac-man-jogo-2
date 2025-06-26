@@ -78,7 +78,46 @@ for (let i = 0; i < ghostCount; i++) {
     ghosts.includes(ghostIndex)
   );
   ghosts.push(ghostIndex);
-  cells[ghostIndex].classList.add
-  
+  cells[ghostIndex].classList.add('ghost');
 }
 
+// Movimento dos Fantasmas (seguem o Pac-Man)
+function moveGhosts() {
+  for (let i = 0; i < ghosts.length; i++) {
+    let currentIndex = ghosts[i];
+    let bestMove = currentIndex;
+    let minDistance = Infinity;
+    const directions = [-1, 1, -width, width];
+
+    for (let dir of directions) {
+      const next = currentIndex + dir;
+      if (
+        next >= 0 &&
+        next < totalCells &&
+        !cells[next].classList.contains('wall') &&
+        !cells[next].classList.contains('ghost')
+      ) {
+        const dx = next % width - pacmanIndex % width;
+        const dy = Math.floor(next / width) - Math.floor(pacmanIndex / width);
+        const distance = Math.abs(dx) + Math.abs(dy);
+        if (distance < minDistance) {
+          bestMove = next;
+          minDistance = distance;
+        }
+      }
+    }
+
+    if (bestMove !== currentIndex) {
+      cells[currentIndex].classList.remove('ghost');
+      ghosts[i] = bestMove;
+      cells[bestMove].classList.add('ghost');
+    }
+
+    if (bestMove === pacmanIndex) {
+      alert("💀 Game Over! Um fantasma pegou você!");
+      location.reload();
+    }
+  }
+}
+
+setInterval(moveGhosts, 400);

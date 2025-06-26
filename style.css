@@ -1,40 +1,95 @@
 body {
-  background: black;
-  color: white;
-  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-header {
+  margin: 20px;
   text-align: center;
-  padding: 20px;
+}
+
+#score {
+  margin-top: 10px;
+  font-size: 16px;
 }
 
 #gameBoard {
   display: grid;
-  grid-template-columns: repeat(30, 20px);
-  width: fit-content;
-  margin: 20px auto;
+  grid-template-columns: repeat(28, 20px);
+  grid-template-rows: repeat(31, 20px);
+  gap: 0;
+  background-color: black;
+  border: 3px solid #fff;
 }
 
 .cell {
   width: 20px;
   height: 20px;
   box-sizing: border-box;
-  background-color: black;
 }
 
 .wall {
-  background: #444;
+  background-color: #1919ff;
 }
 
-.dot {
-  background: white;
+.pac-dot {
+  background-color: #000;
+  position: relative;
+}
+
+.pac-dot::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.power-pellet {
+  background-color: #000;
+  position: relative;
+}
+
+.power-pellet::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: #ff0;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .pacman {
-  background: yellow;
+  background-color: yellow;
   border-radius: 50%;
 }
 
-/* Fantasmas personalizados com a imagem */
-.ghost0, .ghost1, .ghost2, .ghost3, .ghost4 {
-  background-image: url('https://play-lh.googleusercontent.com/yDjaHCaOn_O89vnY7eOKH6ElEBtJrmN2CSI4yhiP1_GVC2zrxXWSFGxO0lt9-CU0mV4=w240-h480-rw');
+.ghost {
+  border-radius: 50%;
   background-size: cover;
+}
+
+.ghost0 { background-color: red; }
+.ghost1 { background-color: pink; }
+.ghost2 { background-color: cyan; }
+.ghost3 { background-color: orange; }
+.ghost4 { background-color: purple; }
+
+.game-over {
+  font-size: 24px;
+  color: red;
+  margin-top: 20px;
 }

@@ -120,4 +120,4 @@ function moveGhosts() {
   }
 }
 
-setInterval(moveGhosts, 300);
+setInterval(moveGhosts, 400);

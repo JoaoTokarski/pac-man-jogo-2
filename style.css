@@ -1,21 +1,40 @@
-.ghost0 { background: red; }
-.ghost1 { background: blue; }
-.ghost2 { background: green; }
-.ghost3 { background: orange; }
-.ghost4 { background: purple; }
-
-.pacman { background: yellow; }
-.wall { background: #333; }
-.dot { background: white; }
-.cell {
-  width: 20px;
-  height: 20px;
-  box-sizing: border-box;
-  border: 1px solid #111;
+body {
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 20px;
 }
+
 #gameBoard {
   display: grid;
   grid-template-columns: repeat(30, 20px);
   width: fit-content;
-  margin: 0 auto;
+  margin: 20px auto;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  background-color: black;
+}
+
+.wall {
+  background: #444;
+}
+
+.dot {
+  background: white;
+}
+
+.pacman {
+  background: yellow;
+  border-radius: 50%;
+}
+
+/* Fantasmas personalizados com a imagem */
+.ghost0, .ghost1, .ghost2, .ghost3, .ghost4 {
+  background-image: url('https://play-lh.googleusercontent.com/yDjaHCaOn_O89vnY7eOKH6ElEBtJrmN2CSI4yhiP1_GVC2zrxXWSFGxO0lt9-CU0mV4=w240-h480-rw');
+  background-size: cover;
 }

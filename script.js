@@ -1,123 +1,73 @@
-const board = document.getElementById('gameBoard');
-const width = 30;
-const height = 30;
-const totalCells = width * height;
-const cells = [];
+ <script>
+  
+ </script>
+        // Game constants
+        const CELL_SIZE = 16;
+        const BOARD_WIDTH = 28;
+        const BOARD_HEIGHT = 31;
+        const PACMAN_SPEED = 2;
+        const GHOST_SPEED = 1.5;
+        
+        // Game variables
+        let score = 0;
+        let lives = 3;
+        let gameOver = false;
+        
+        // Get canvas and context
+        const canvas = document.getElementById('game-board');
+        const ctx = canvas.getContext('2d');
+        
+        // Maze layout (1 = wall, 0 = path/dot, 2 = power pellet)
+        const maze = [
 
-const layout = Array.from({ length: totalCells }, (_, i) => {
-  const row = Math.floor(i / width);
-  const col = i % width;
-  if (
-    row === 0 || row === height - 1 ||
-    col === 0 || col === width - 1 ||
-    Math.random() < 0.08
-  ) return 1; // parede
-  return 0; // espaço
-});
+           [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
+            [1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1],
+            [1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1],
+            [1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1],
+            [1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1],
+            [1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+        
+        // Dots data (0 = no dot, 1 = dot, 2 = power pellet)
+        let dots = [];
 
-function createBoard() {
-  board.innerHTML = '';
-  for (let i = 0; i < totalCells; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    if (layout[i] === 1) {
-      cell.classList.add('wall');
-    } else {
-      cell.classList.add('dot');
-    }
-    board.appendChild(cell);
-    cells.push(cell);
-  }
-}
-createBoard();
-
-// Pac-Man
-let pacmanIndex = width + 1;
-cells[pacmanIndex].classList.remove('dot');
-cells[pacmanIndex].classList.add('pacman');
-
-// Movimento do Pac-Man
-document.addEventListener('keydown', e => {
-  let nextIndex = pacmanIndex;
-  switch (e.key) {
-    case 'ArrowUp': nextIndex -= width; break;
-    case 'ArrowDown': nextIndex += width; break;
-    case 'ArrowLeft': nextIndex -= 1; break;
-    case 'ArrowRight': nextIndex += 1; break;
-    default: return;
-  }
-
-  if (
-    nextIndex >= 0 &&
-    nextIndex < totalCells &&
-    !cells[nextIndex].classList.contains('wall')
-  ) {
-    cells[pacmanIndex].classList.remove('pacman');
-    pacmanIndex = nextIndex;
-
-    if (cells[pacmanIndex].classList.contains('dot')) {
-      cells[pacmanIndex].classList.remove('dot');
-    }
-
-    cells[pacmanIndex].classList.add('pacman');
-  }
-});
-
-// Fantasmas
-const ghostCount = 5;
-const ghosts = [];
-
-for (let i = 0; i < ghostCount; i++) {
-  let ghostIndex;
-  do {
-    ghostIndex = Math.floor(Math.random() * totalCells);
-  } while (
-    layout[ghostIndex] === 1 ||
-    ghostIndex === pacmanIndex ||
-    ghosts.some(g => g.index === ghostIndex)
-  );
-  ghosts.push({ index: ghostIndex, className: `ghost${i}` });
-  cells[ghostIndex].classList.add(`ghost${i}`);
-}
-
-// Movimento dos Fantasmas
-function moveGhosts() {
-  for (let i = 0; i < ghosts.length; i++) {
-    let current = ghosts[i];
-    let currentIndex = current.index;
-    let bestMove = currentIndex;
-    let minDistance = Infinity;
-    const directions = [-1, 1, -width, width];
-
-    for (let dir of directions) {
-      const next = currentIndex + dir;
-      if (
-        next >= 0 &&
-        next < totalCells &&
-        !cells[next].classList.contains('wall') &&
-        !ghosts.some(g => g.index === next)
-      ) {
-        const dx = next % width - pacmanIndex % width;
-        const dy = Math.floor(next / width) - Math.floor(pacmanIndex / width);
-        const distance = Math.abs(dx) + Math.abs(dy);
-        if (distance < minDistance) {
-          bestMove = next;
-          minDistance = distance;
+        // Initialize dots array
+        for (let row = 0; row < BOARD_HEIGHT; row++) {
+            dots[row] = [];
+            for (let col = 0; col < BOARD_WIDTH; col++) {
+                dots[row][col] = maze[row][col] === 0 ? 1 : 0;
+            }
         }
-      }
-    }
-
-    if (bestMove !== currentIndex) {
-      cells[currentIndex].classList.remove(current.className);
-      ghosts[i].index = bestMove;
-      cells[bestMove].classList.add(current.className);
-    }
-
-    if (bestMove === pacmanIndex) {
-      alert("💀 Game Over! Um fantasma pegou você!");
-      location.reload();
-    }
-  }
-}
-
-setInterval(moveGhosts, 300);
+        
+        // Place power pellets
+        dots[3][1] = 2;
+        dots[3][26] = 2;
+        dots[20][1] = 2;
+        dots[20][26] = 2;
+        
+        // Pac-Man object
+        const pacman = {
+            x: 14 * CELL_SIZE,
+            y: 23 * CELL_SIZE,
+            radius: CELL_SIZE / 2,
+            speedX: 0,
+            speedY: 0,
+            mouthAngle: 0,
+            mouthDirection: 1.,
+        }
